@@ -215,7 +215,7 @@ $databases = array (
   array (
     'default' =>
     array (
-      'database' => 'crm_jir',
+      'database' => 'drupalm1_crm_jir',
       'username' => 'root',
       'password' => 'root',
       'host' => 'localhost',
