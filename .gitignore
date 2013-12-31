@@ -1,2 +1,9 @@
 # Ignore OS X specific files
 .DS_Store
+
+# Ignore configuration files that may contain sensitive information.
+web/sites/*/settings*.php
+
+# Ignore paths that contain user-generated content.
+web/sites/*/files
+web/sites/*/private
