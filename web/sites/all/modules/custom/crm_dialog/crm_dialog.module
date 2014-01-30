@@ -31,7 +31,7 @@ function crm_dialog_menu() {
   );
 
 
-  $items['node/%node/edit_story/%dialog_js'] = array(
+  $items['node/%node_id/edit_story/%dialog_js'] = array(
     'title' => 'Edit your story',
     'page callback' => 'crm_dialog_dialog_story_form_handler',
     'page arguments' =>  array(1, 3), // we pass node object and dialog ajax marker to our new function
@@ -115,11 +115,13 @@ function crm_dialog_ajax_callback($ajax) {
 /**
 * Retrieves the form and makes it work via dialog
 */
-function crm_dialog_dialog_story_form_handler($node, $ajax) {
+function crm_dialog_dialog_story_form_handler($node_id, $ajax) {
   // if user has js enabled...
   if ($ajax) {
     dialog_display(TRUE);
 
+
+    $node = node_load($node_id);
     $content = drupal_get_form('crm_dialog_dialog_story_form_builder', $node);
     $title = t('Edit your story');
 
