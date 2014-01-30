@@ -1,0 +1,6 @@
+name = CRM Dialog Example
+description = CRM Example implementations of using the Dialog API.
+core = 7.x
+package = CRM Custom Modules
+dependencies[] = dialog
+

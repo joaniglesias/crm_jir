@@ -1,0 +1,186 @@
+<?php
+
+//
+//  ------------------------------------------------- DIALOG MODULE EXAMPLE -------------------------------------------------
+//
+
+/**
+ * @file
+ * Provides a demonstration of using the Dialog API.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function crm_dialog_menu() {
+  // Normal menu callback.
+  $items['crm_dialog/example'] = array(
+    'title' => 'CRM Dialog example',
+    'description' => 'A demonstration of the CRM Dialog module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('crm_dialog_page'),
+    'access arguments' => array('access content'),
+  );
+  // Dialog menu callback.
+  $items['crm_dialog/%dialog_js/example'] = array(
+    'title' => 'Dialog example',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'crm_dialog_ajax_callback',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+  );
+
+
+  $items['node/%node/edit_story/%dialog_js'] = array(
+    'title' => 'Edit your story',
+    'page callback' => 'crm_dialog_dialog_story_form_handler',
+    'page arguments' =>  array(1, 3), // we pass node object and dialog ajax marker to our new function
+    'access callback' => 'node_access', // We allow to edit this field if user has permissions to edit node
+    'access arguments' => array('update', 1),
+  );
+
+  return $items;
+}
+
+/**
+ * Menu callback for our dialog example page.
+ */
+function crm_dialog_page() {
+  // Add the required Dialog JavaScript and CSS.
+  $examples['#attached']['library'] = array(
+    array('dialog', 'dialog'),
+  );
+
+  // Modules may add the 'use-dialog' class to a link to have its content
+  // open in a dialog.
+  $examples['links']['#theme'] = 'item_list';
+  $examples['links']['#items'] = array(
+    l('Simple test', 'crm_dialog/nojs/example', array('attributes' => array('class' => array('use-dialog', 'use-ajax')))),
+    l('Node 7 edit body', '/node/7/edit_story/nojs', array('attributes' => array('class' => array('use-dialog', 'use-ajax')))),
+  );
+  // $examples['links']['#items'] = array(
+  //   l('Add activity test', 'crm_dialog/nojs/example', array('attributes' => array('class' => array('use-dialog', 'use-ajax')))),
+  // );
+
+  return $examples;
+}
+
+/**
+ * Menu callback for our AJAX
+ */
+function crm_dialog_ajax_callback($ajax) {
+  // If we're using JavaScript, display the content within the dialog.
+  if ($ajax) {
+    // Construct the dialog's content.
+    $content = node_view(node_load(5));//crm_dialog_page();
+    // Options that are passed to the jQuery UI dialog. See the jQuery UI
+    // website for more available options: http://jqueryui.com/demos/dialog/
+    $options = array(
+      'height' => 'auto', //rand(25, 75) . '%',
+      'width' => 'auto',//rand(25, 75) . '%',
+      'position' => 'center',
+      'title' => t('Dialog example'),
+      'closetext' => 'tancar finestra',
+    );
+
+    $commands = array();
+    $commands[] = dialog_command_display($content, $options);
+    ajax_deliver(array('#type' => 'ajax', '#commands' => $commands));
+  }
+  else {
+    // If the user isn't using JavaScript, just show the normal page.
+    return crm_dialog_page();
+  }
+}
+
+
+
+//
+//  ------------------------------------------------- BLOG EXAMPLE -------------------------------------------------
+//  see: http://pixeljets.com/blog/improving-user-experience-using-dialogs-profile-edit-modal-forms
+
+
+// function crm_dialog_menu() {
+//   return array(
+//     'node/%node/edit_story/%dialog_js' => array(
+//       'title' => 'Edit your story',
+//       'page callback' => 'crm_dialog_dialog_story_form_handler',
+//       'page arguments' =>  array(1, 3), // we pass node object and dialog ajax marker to our new function
+//       'access callback' => 'node_access', // We allow to edit this field if user has permissions to edit node
+//       'access arguments' => array('update', 1),
+//     )
+//   );
+// }
+
+/**
+* Retrieves the form and makes it work via dialog
+*/
+function crm_dialog_dialog_story_form_handler($node, $ajax) {
+  // if user has js enabled...
+  if ($ajax) {
+    dialog_display(TRUE);
+
+    $content = drupal_get_form('crm_dialog_dialog_story_form_builder', $node);
+    $title = t('Edit your story');
+
+
+
+    if (dialog_display()) {
+      $output[] = dialog_command_display($content, array('title' => $title, 'draggable' => false, 'resizable' => false, ));
+    } else {
+      $output[] = dialog_command_reload();
+    }
+
+
+    ajax_deliver(array('#type' => 'ajax', '#commands' => $output));
+
+  } else {
+    // User has js disabled
+    return drupal_get_form('crm_dialog_dialog_story_form_builder', $node);
+  }
+
+}
+
+/**
+* Builds the form
+*/
+function crm_dialog_dialog_story_form_builder($form, $form_state, $node) {
+  $form = array();
+  form_load_include($form_state, 'inc', 'node', 'node.pages');
+  $form = node_form($form, $form_state, $node);
+
+  // basically, we hide everything except 'body' field
+  foreach (element_children($form) as $key) {
+    if ($key != 'body') {
+      $form[$key]['#access'] = FALSE;
+    }
+  }
+
+  $form['submit'] = $form['actions']['submit'];
+  $form['submit']['#weight'] = 100;
+  $form['submit']['#attributes'] = array('class' => array('use-ajax-submit'));
+
+
+  $form['#process'][] = 'dialog_process_ajax_form';
+  $form['#submit'][] = 'crm_dialog_dialog_story_form_submit';
+
+  return $form;
+}
+
+function crm_dialog_dialog_story_form_submit($form, &$form_state) {
+  // Tell Dialog that we want to close it after form submit
+  drupal_static_reset('dialog_display');
+
+  // We also don't want to redirect the form needlessly.  The redirected page
+  // would have loaded in the dialog.  We'll be dismissing that dialog. If a
+  // destination was specified we will handle that with a dialog_command.
+  $form_state['no_redirect'] = true;
+}
+
+
+
+
+
+
+
+
