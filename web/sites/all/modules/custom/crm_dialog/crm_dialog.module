@@ -31,7 +31,7 @@ function crm_dialog_menu() {
   );
 
 
-  $items['node/%node_id/edit_story/%dialog_js'] = array(
+  $items['node/%/edit_story/%dialog_js'] = array(
     'title' => 'Edit your story',
     'page callback' => 'crm_dialog_dialog_story_form_handler',
     'page arguments' =>  array(1, 3), // we pass node object and dialog ajax marker to our new function
@@ -125,10 +125,18 @@ function crm_dialog_dialog_story_form_handler($node_id, $ajax) {
     $content = drupal_get_form('crm_dialog_dialog_story_form_builder', $node);
     $title = t('Edit your story');
 
+        $options = array(
+      'height' => 'auto', //rand(25, 75) . '%',
+      'width' => 'auto',//rand(25, 75) . '%',
+      'position' => 'center',
+      'title' => t('Dialog example'),
+      'closetext' => 'tancar finestra',
+    );
+
 
 
     if (dialog_display()) {
-      $output[] = dialog_command_display($content, array('title' => $title, 'draggable' => false, 'resizable' => false, ));
+      $output[] = dialog_command_display($content, $options);//array('title' => $title, 'draggable' => false, 'resizable' => false, ));
     } else {
       $output[] = dialog_command_reload();
     }
