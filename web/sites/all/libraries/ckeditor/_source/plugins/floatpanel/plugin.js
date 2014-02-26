@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -207,9 +207,16 @@ CKEDITOR.plugins.add( 'floatpanel',
 
 							if ( block.autoSize )
 							{
-								var panelDoc = block.element.getDocument();
-								var width = ( CKEDITOR.env.webkit? block.element : panelDoc.getBody() )[ '$' ].scrollWidth;
+								// We must adjust first the width or IE6 could include extra lines in the height computation
+								var widthNode = block.element.$;
 
+								if ( CKEDITOR.env.gecko || CKEDITOR.env.opera )
+									widthNode = widthNode.parentNode;
+
+								if ( CKEDITOR.env.ie )
+									widthNode = widthNode.document.body;
+
+								var width = widthNode.scrollWidth;
 								// Account for extra height needed due to IE quirks box model bug:
 								// http://en.wikipedia.org/wiki/Internet_Explorer_box_model_bug
 								// (#3426)

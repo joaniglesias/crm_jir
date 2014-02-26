@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -157,7 +157,7 @@ CKEDITOR.plugins.add( 'dialogui' );
 					if ( elementDefinition.labelLayout != 'horizontal' )
 						html.push( '<label class="cke_dialog_ui_labeled_label' + requiredClass + '" ',
 								' id="'+  _.labelId + '"',
-								( _.inputId? ' for="' + _.inputId + '"' : '' ),
+								' for="' + _.inputId + '"',
 								( elementDefinition.labelStyle ? ' style="' + elementDefinition.labelStyle + '"' : '' ) +'>',
 								elementDefinition.label,
 								'</label>',
@@ -239,6 +239,30 @@ CKEDITOR.plugins.add( 'dialogui' );
 
 				if ( elementDefinition.inputStyle )
 					attributes.style = elementDefinition.inputStyle;
+
+				// If user presses Enter in a text box, it implies clicking OK for the dialog.
+				var me = this, keyPressedOnMe = false;
+				dialog.on( 'load', function()
+					{
+						me.getInputElement().on( 'keydown', function( evt )
+							{
+								if ( evt.data.getKeystroke() == 13 )
+									keyPressedOnMe = true;
+							} );
+
+						// Lower the priority this 'keyup' since 'ok' will close the dialog.(#3749)
+						me.getInputElement().on( 'keyup', function( evt )
+							{
+								if ( evt.data.getKeystroke() == 13 && keyPressedOnMe )
+								{
+									dialog.getButton( 'ok' ) && setTimeout( function ()
+									{
+										dialog.getButton( 'ok' ).click();
+									}, 0 );
+									keyPressedOnMe = false;
+								}
+							}, null, null, 1000 );
+					} );
 
 				/** @ignore */
 				var innerHTML = function()
@@ -653,7 +677,6 @@ CKEDITOR.plugins.add( 'dialogui' );
 							' frameborder="0"' +
 							' allowtransparency="0"' +
 							' class="cke_dialog_ui_input_file"' +
-							' role="presentation"' +
 							' id="', _.frameId, '"' +
 							' title="', elementDefinition.label, '"' +
 							' src="javascript:void(' ];
@@ -1182,7 +1205,7 @@ CKEDITOR.plugins.add( 'dialogui' );
 				{
 					onChange : function( dialog, func )
 					{
-						if ( !CKEDITOR.env.ie || ( CKEDITOR.env.version > 8 ) )
+						if ( !CKEDITOR.env.ie )
 							return commonEventProcessors.onChange.apply( this, arguments );
 						else
 						{
@@ -1420,17 +1443,11 @@ CKEDITOR.plugins.add( 'dialogui' );
 						if ( elementDefinition.size )
 							size = elementDefinition.size - ( CKEDITOR.env.ie  ? 7 : 0 );	// "Browse" button is bigger in IE.
 
-						var inputId = _.frameId + '_input';
-
 						frameDocument.$.write( [ '<html dir="' + langDir + '" lang="' + langCode + '"><head><title></title></head><body style="margin: 0; overflow: hidden; background: transparent;">',
 								'<form enctype="multipart/form-data" method="POST" dir="' + langDir + '" lang="' + langCode + '" action="',
 								CKEDITOR.tools.htmlEncode( elementDefinition.action ),
 								'">',
-								// Replicate the field label inside of iframe.
-							    '<label id="', _.labelId, '" for="', inputId, '" style="display:none">',
-								CKEDITOR.tools.htmlEncode( elementDefinition.label ),
-								'</label>',
-								'<input id="', inputId, '" aria-labelledby="', _.labelId,'" type="file" name="',
+								'<input type="file" name="',
 								CKEDITOR.tools.htmlEncode( elementDefinition.id || 'cke_upload' ),
 								'" size="',
 								CKEDITOR.tools.htmlEncode( size > 0 ? size : "" ),

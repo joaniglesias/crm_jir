@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -141,7 +141,7 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 			dir = editor.lang.dir,
 			tabsToRemove = {},
 			i,
-			processed, stopPropagation;
+			processed;
 
 			if ( ( buttonsOrder == 'OS' && CKEDITOR.env.mac ) ||    // The buttons in MacOS Apps are in reverse order (#4750)
 				( buttonsOrder == 'rtl' && dir == 'ltr' ) ||
@@ -397,18 +397,16 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		this.changeFocus = changeFocus;
 
 
-		function keydownHandler( evt )
+		function focusKeydownHandler( evt )
 		{
 			// If I'm not the top dialog, ignore.
 			if ( me != CKEDITOR.dialog._.currentTop )
 				return;
 
 			var keystroke = evt.data.getKeystroke(),
-				rtl = editor.lang.dir == 'rtl',
-				button;
+				rtl = editor.lang.dir == 'rtl';
 
-			processed = stopPropagation = 0;
-
+			processed = 0;
 			if ( keystroke == 9 || keystroke == CKEDITOR.SHIFT + 9 )
 			{
 				var shiftPressed = ( keystroke == CKEDITOR.SHIFT + 9 );
@@ -452,64 +450,35 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 				changeFocus( 1 );
 				processed = 1;
 			}
-			// If user presses enter key in a text box, it implies clicking OK for the dialog.
-			else if ( keystroke == 13 /*ENTER*/ )
-			{
-				// Don't do that for a target that handles ENTER.
-				var target = evt.data.getTarget();
-				if ( !target.is( 'a', 'button', 'select', 'textarea' ) && ( !target.is( 'input' ) || target.$.type != 'button' ) )
-				{
-					button = this.getButton( 'ok' );
-					button && CKEDITOR.tools.setTimeout( button.click, 0, button );
-					processed = 1;
-				}
-				stopPropagation = 1; // Always block the propagation (#4269)
-			}
-			else if ( keystroke == 27 /*ESC*/ )
-			{
-				button = this.getButton( 'cancel' );
 
-				// If there's a Cancel button, click it, else just fire the cancel event and hide the dialog.
-				if ( button )
-					CKEDITOR.tools.setTimeout( button.click, 0, button );
-				else
-				{
-					if ( this.fire( 'cancel', { hide : true } ).hide !== false )
-						this.hide();
-				}
-				stopPropagation = 1; // Always block the propagation (#4269)
+			if ( processed )
+			{
+				evt.stop();
+				evt.data.preventDefault();
 			}
-			else
-				return;
-
-			keypressHandler( evt );
 		}
 
-		function keypressHandler( evt )
+		function focusKeyPressHandler( evt )
 		{
-			if ( processed )
-				evt.data.preventDefault(1);
-			else if ( stopPropagation )
-				evt.data.stopPropagation();
+			processed && evt.data.preventDefault();
 		}
 
 		var dialogElement = this._.element;
 		// Add the dialog keyboard handlers.
 		this.on( 'show', function()
 			{
-				dialogElement.on( 'keydown', keydownHandler, this );
-
+				dialogElement.on( 'keydown', focusKeydownHandler, this, null, 0 );
 				// Some browsers instead, don't cancel key events in the keydown, but in the
-				// keypress. So we must do a longer trip in those cases. (#4531,#8985)
-				if ( CKEDITOR.env.opera || CKEDITOR.env.gecko )
-					dialogElement.on( 'keypress', keypressHandler, this );
+				// keypress. So we must do a longer trip in those cases. (#4531)
+				if ( CKEDITOR.env.opera || ( CKEDITOR.env.gecko && CKEDITOR.env.mac ) )
+					dialogElement.on( 'keypress', focusKeyPressHandler, this );
 
 			} );
 		this.on( 'hide', function()
 			{
-				dialogElement.removeListener( 'keydown', keydownHandler );
-				if ( CKEDITOR.env.opera || CKEDITOR.env.gecko )
-					dialogElement.removeListener( 'keypress', keypressHandler );
+				dialogElement.removeListener( 'keydown', focusKeydownHandler );
+				if ( CKEDITOR.env.opera || ( CKEDITOR.env.gecko && CKEDITOR.env.mac ) )
+					dialogElement.removeListener( 'keypress', focusKeyPressHandler );
 
 				// Reset fields state when closing dialog.
 				iterContents( function( item ) { resetField.apply( item ); } );
@@ -517,7 +486,7 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		this.on( 'iframeAdded', function( evt )
 			{
 				var doc = new CKEDITOR.dom.document( evt.data.iframe.$.contentWindow.document );
-				doc.on( 'keydown', keydownHandler, this, null, 0 );
+				doc.on( 'keydown', focusKeydownHandler, this, null, 0 );
 			} );
 
 		// Auto-focus logic in dialog.
@@ -665,15 +634,6 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 			} );
 	}
 
-	// Re-layout the dialog on window resize.
-	function resizeWithWindow( dialog )
-	{
-		var win = CKEDITOR.document.getWindow();
-		function resizeHandler() { dialog.layout(); }
-		win.on( 'resize', resizeHandler );
-		dialog.on( 'hide', function() { win.removeListener( 'resize', resizeHandler ); } );
-	}
-
 	CKEDITOR.dialog.prototype =
 	{
 		destroy : function()
@@ -742,54 +702,49 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		 * @example
 		 * dialogObj.move( 10, 40 );
 		 */
-		move : function( x, y, save )
+		move : (function()
 		{
-			// The dialog may be fixed positioned or absolute positioned. Ask the
-			// browser what is the current situation first.
-			var element = this._.element.getFirst(),
-				rtl = this._.editor.lang.dir == 'rtl';
-
-			var isFixed = element.getComputedStyle( 'position' ) == 'fixed';
-
-			// (#8888) In some cases of a very small viewport, dialog is incorrectly
-			// positioned in IE7. It also happens that it remains sticky and user cannot
-			// scroll down/up to reveal dialog's content below/above the viewport; this is
-			// cumbersome.
-			// The only way to fix this is to move mouse out of the browser and
-			// go back to see that dialog position is automagically fixed. No events,
-			// no style change - pure magic. This is a IE7 rendering issue, which can be
-			// fixed with dummy style redraw on each move.
-			element.setStyle( 'zoom', '100%' );
-
-			if ( isFixed && this._.position && this._.position.x == x && this._.position.y == y )
-				return;
-
-			// Save the current position.
-			this._.position = { x : x, y : y };
-
-			// If not fixed positioned, add scroll position to the coordinates.
-			if ( !isFixed )
+			var isFixed;
+			return function( x, y, save )
 			{
-				var scrollPosition = CKEDITOR.document.getWindow().getScrollPosition();
-				x += scrollPosition.x;
-				y += scrollPosition.y;
-			}
+				// The dialog may be fixed positioned or absolute positioned. Ask the
+				// browser what is the current situation first.
+				var element = this._.element.getFirst(),
+					rtl = this._.editor.lang.dir == 'rtl';
 
-			// Translate coordinate for RTL.
-			if ( rtl )
-			{
-				var dialogSize = this.getSize(),
-					viewPaneSize = CKEDITOR.document.getWindow().getViewPaneSize();
-				x = viewPaneSize.width - dialogSize.width - x;
-			}
+				if ( isFixed === undefined )
+					isFixed = element.getComputedStyle( 'position' ) == 'fixed';
 
-			var styles = { 'top'	: ( y > 0 ? y : 0 ) + 'px' };
-			styles[ rtl ? 'right' : 'left' ] = ( x > 0 ? x : 0 ) + 'px';
+				if ( isFixed && this._.position && this._.position.x == x && this._.position.y == y )
+					return;
 
-			element.setStyles( styles );
+				// Save the current position.
+				this._.position = { x : x, y : y };
 
-			save && ( this._.moved = 1 );
-		},
+				// If not fixed positioned, add scroll position to the coordinates.
+				if ( !isFixed )
+				{
+					var scrollPosition = CKEDITOR.document.getWindow().getScrollPosition();
+					x += scrollPosition.x;
+					y += scrollPosition.y;
+				}
+
+				// Translate coordinate for RTL.
+				if ( rtl )
+				{
+					var dialogSize = this.getSize(),
+						viewPaneSize = CKEDITOR.document.getWindow().getViewPaneSize();
+					x = viewPaneSize.width - dialogSize.width - x;
+				}
+
+				var styles = { 'top'	: ( y > 0 ? y : 0 ) + 'px' };
+				styles[ rtl ? 'right' : 'left' ] = ( x > 0 ? x : 0 ) + 'px';
+
+				element.setStyles( styles );
+
+				save && ( this._.moved = 1 );
+			};
+		})(),
 
 		/**
 		 * Gets the dialog's position in the window.
@@ -860,14 +815,30 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 			element.on( 'keydown', accessKeyDownHandler );
 			element.on( CKEDITOR.env.opera ? 'keypress' : 'keyup', accessKeyUpHandler );
 
+			// Prevent some keys from bubbling up. (#4269)
+			for ( var event in { keyup :1, keydown :1, keypress :1 } )
+				element.on( event, preventKeyBubbling );
+
+			// Register the Esc hotkeys.
+			registerAccessKey( this, this, '\x1b', null, function()
+					{
+						var button = this.getButton( 'cancel' );
+						// If there's a Cancel button, click it, else just fire the cancel event and hide the dialog
+						if ( button )
+							button.click();
+						else
+						{
+							if ( this.fire( 'cancel', { hide : true } ).hide !== false )
+								this.hide();
+						}
+					} );
+
 			// Reset the hasFocus state.
 			this._.hasFocus = false;
 
 			CKEDITOR.tools.setTimeout( function()
 				{
 					this.layout();
-					resizeWithWindow( this );
-
 					this.parts.dialog.setStyle( 'visibility', '' );
 
 					// Execute onLoad for the first show.
@@ -890,26 +861,11 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		 */
 		layout : function()
 		{
-			var el = this.parts.dialog;
-			var dialogSize = this.getSize();
-			var win = CKEDITOR.document.getWindow(),
-					viewSize = win.getViewPaneSize();
+			var viewSize = CKEDITOR.document.getWindow().getViewPaneSize(),
+					dialogSize = this.getSize();
 
-			var posX = ( viewSize.width - dialogSize.width ) / 2,
-				posY = ( viewSize.height - dialogSize.height ) / 2;
-
-			// Switch to absolute position when viewport is smaller than dialog size.
-			if ( !CKEDITOR.env.ie6Compat )
-			{
-				if ( dialogSize.height + ( posY > 0 ? posY : 0 ) > viewSize.height ||
-						 dialogSize.width + ( posX > 0 ? posX : 0 ) > viewSize.width )
-					el.setStyle( 'position', 'absolute' );
-				else
-					el.setStyle( 'position', 'fixed' );
-			}
-
-			this.move( this._.moved ? this._.position.x : posX,
-					this._.moved ? this._.position.y : posY );
+			this.move( this._.moved ? this._.position.x : ( viewSize.width - dialogSize.width ) / 2,
+					this._.moved ? this._.position.y : ( viewSize.height - dialogSize.height ) / 2 );
 		},
 
 		/**
@@ -994,8 +950,6 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 
 			this.fire( 'hide', {} );
 			this._.editor.fire( 'dialogHide', this );
-			// Reset the tab page.
-			this.selectPage( this._.tabIdList[ 0 ] );
 			var element = this._.element;
 			element.setStyle( 'display', 'none' );
 			this.parts.dialog.setStyle( 'visibility', 'hidden' );
@@ -1024,6 +978,10 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 				// Remove access key handlers.
 				element.removeListener( 'keydown', accessKeyDownHandler );
 				element.removeListener( CKEDITOR.env.opera ? 'keypress' : 'keyup', accessKeyUpHandler );
+
+				// Remove bubbling-prevention handler. (#4269)
+				for ( var event in { keyup :1, keydown :1, keypress :1 } )
+					element.removeListener( event, preventKeyBubbling );
 
 				var editor = this._.editor;
 				editor.focus();
@@ -2239,6 +2197,14 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 
 	var tabAccessKeyDown = function( dialog, key )
 	{
+	};
+
+	// ESC, ENTER
+	var preventKeyBubblingKeys = { 27 :1, 13 :1 };
+	var preventKeyBubbling = function( e )
+	{
+		if ( e.data.getKeystroke() in preventKeyBubblingKeys )
+			e.data.stopPropagation();
 	};
 
 	(function()

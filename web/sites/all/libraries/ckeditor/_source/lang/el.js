@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -31,8 +31,7 @@ CKEDITOR.lang['el'] =
 	 * Screenreader titles. Please note that screenreaders are not always capable
 	 * of reading non-English words. So be careful while translating it.
 	 */
-	editorTitle : 'Rich text editor, %1', // MISSING
-	editorHelp : 'Press ALT 0 for help', // MISSING
+	editorTitle : 'Rich text editor, %1, press ALT 0 for help.', // MISSING
 
 	// ARIA descriptions.
 	toolbars	: 'Εργαλειοθήκες Επεξεργαστή',
@@ -107,8 +106,8 @@ CKEDITOR.lang['el'] =
 		targetTop		: 'Αρχική Περιοχή (_top)',
 		targetSelf		: 'Ίδια Περιοχή (_self)',
 		targetParent	: 'Γονεϊκό Παράθυρο (_parent)',
-		langDirLTR		: 'Αριστερά προς Δεξιά (LTR)',
-		langDirRTL		: 'Δεξιά προς Αριστερά (RTL)',
+		langDirLTR		: 'Left to Right (LTR)', // MISSING
+		langDirRTL		: 'Right to Left (RTL)', // MISSING
 		styles			: 'Μορφή',
 		cssClasses		: 'Stylesheet Classes', // MISSING
 		width			: 'Πλάτος',
@@ -120,9 +119,8 @@ CKEDITOR.lang['el'] =
 		alignTop		: 'Πάνω',
 		alignMiddle		: 'Μέση',
 		alignBottom		: 'Κάτω',
-		invalidValue	: 'Invalid value.', // MISSING
-		invalidHeight	: 'Το ύψος πρέπει να είναι ένας αριθμός.',
-		invalidWidth	: 'Το πλάτος πρέπει να είναι ένας αριθμός.',
+		invalidHeight	: 'Height must be a number.', // MISSING
+		invalidWidth	: 'Width must be a number.', // MISSING
 		invalidCssLength	: 'Value specified for the "%1" field must be a positive number with or without a valid CSS measurement unit (px, %, in, cm, mm, em, ex, pt, or pc).', // MISSING
 		invalidHtmlLength	: 'Value specified for the "%1" field must be a positive number with or without a valid HTML measurement unit (px or %).', // MISSING
 		invalidInlineStyle	: 'Value specified for the inline style must consist of one or more tuples with the format of "name : value", separated by semi-colons.', // MISSING
@@ -134,7 +132,7 @@ CKEDITOR.lang['el'] =
 
 	contextmenu :
 	{
-		options : 'Επιλογές Αναδυόμενου Μενού'
+		options : 'Context Menu Options' // MISSING
 	},
 
 	// Special char dialog.
@@ -142,7 +140,7 @@ CKEDITOR.lang['el'] =
 	{
 		toolbar		: 'Εισαγωγή Ειδικού Χαρακτήρα',
 		title		: 'Επιλέξτε έναν Ειδικό Χαρακτήρα',
-		options : 'Επιλογές Ειδικών Χαρακτήρων'
+		options : 'Special Character Options' // MISSING
 	},
 
 	// Link dialog.
@@ -165,7 +163,7 @@ CKEDITOR.lang['el'] =
 		targetFrameName	: 'Όνομα Παραθύρου Προορισμού',
 		targetPopupName	: 'Όνομα Αναδυόμενου Παραθύρου',
 		popupFeatures	: 'Επιλογές Αναδυόμενου Παραθύρου',
-		popupResizable	: 'Προσαρμοζόμενο Μέγεθος',
+		popupResizable	: 'Resizable', // MISSING
 		popupStatusBar	: 'Γραμμή Κατάστασης',
 		popupLocationBar: 'Γραμμή Τοποθεσίας',
 		popupToolbar	: 'Εργαλειοθήκη',
@@ -188,7 +186,7 @@ CKEDITOR.lang['el'] =
 		cssClasses		: 'Stylesheet Classes',
 		charset			: 'Κωδικοποίηση Χαρακτήρων Προσαρτημένης Πηγής',
 		styles			: 'Μορφή',
-		rel			: 'Σχέση',
+		rel			: 'Relationship', // MISSING
 		selectAnchor		: 'Επιλέξτε μια άγκυρα',
 		anchorName		: 'Βάσει του Ονόματος της άγκυρας',
 		anchorId			: 'Βάσει του Element Id',
@@ -208,22 +206,22 @@ CKEDITOR.lang['el'] =
 		title		: 'Ιδιότητες άγκυρας',
 		name		: 'Όνομα άγκυρας',
 		errorName	: 'Παρακαλούμε εισάγετε όνομα άγκυρας',
-		remove		: 'Αφαίρεση Άγκυρας'
+		remove		: 'Remove Anchor' // MISSING
 	},
 
 	// List style dialog
 	list:
 	{
-		numberedTitle		: 'Ιδιότητες Αριθμημένης Λίστας ',
-		bulletedTitle		: 'Ιδιότητες Λίστας Σημείων',
-		type				: 'Τύπος',
-		start				: 'Εκκίνηση',
-		validateStartNumber				:'Ο αριθμός εκκίνησης της αρίθμησης πρέπει να είναι ακέραιος αριθμός.',
-		circle				: 'Κύκλος',
-		disc				: 'Δίσκος',
-		square				: 'Τετράγωνο',
-		none				: 'Τίποτα',
-		notset				: '<δεν έχει οριστεί>',
+		numberedTitle		: 'Numbered List Properties', // MISSING
+		bulletedTitle		: 'Bulleted List Properties', // MISSING
+		type				: 'Type', // MISSING
+		start				: 'Start', // MISSING
+		validateStartNumber				:'List start number must be a whole number.', // MISSING
+		circle				: 'Circle', // MISSING
+		disc				: 'Disc', // MISSING
+		square				: 'Square', // MISSING
+		none				: 'None', // MISSING
+		notset				: '<not set>', // MISSING
 		armenian			: 'Armenian numbering', // MISSING
 		georgian			: 'Georgian numbering (an, ban, gan, etc.)', // MISSING
 		lowerRoman			: 'Lower Roman (i, ii, iii, iv, v, etc.)', // MISSING
@@ -231,14 +229,14 @@ CKEDITOR.lang['el'] =
 		lowerAlpha			: 'Lower Alpha (a, b, c, d, e, etc.)', // MISSING
 		upperAlpha			: 'Upper Alpha (A, B, C, D, E, etc.)', // MISSING
 		lowerGreek			: 'Lower Greek (alpha, beta, gamma, etc.)', // MISSING
-		decimal				: 'Δεκαδικός (1, 2, 3, κτλ)',
+		decimal				: 'Decimal (1, 2, 3, etc.)', // MISSING
 		decimalLeadingZero	: 'Decimal leading zero (01, 02, 03, etc.)' // MISSING
 	},
 
 	// Find And Replace Dialog
 	findAndReplace :
 	{
-		title				: 'Αναζήτηση και Αντικατάσταση',
+		title				: 'Find and Replace', // MISSING
 		find				: 'Αναζήτηση',
 		replace				: 'Αντικατάσταση',
 		findWhat			: 'Αναζήτηση για:',
@@ -264,69 +262,69 @@ CKEDITOR.lang['el'] =
 		border		: 'Πάχος Περιγράμματος',
 		widthPx		: 'pixels',
 		widthPc		: 'τοις εκατό',
-		widthUnit	: 'μονάδα πλάτους',
+		widthUnit	: 'width unit', // MISSING
 		cellSpace	: 'Διάστημα κελιών',
 		cellPad		: 'Γέμισμα κελιών',
 		caption		: 'Λεζάντα',
 		summary		: 'Περίληψη',
-		headers		: 'Κεφαλίδες',
-		headersNone		: 'Κανένα',
-		headersColumn	: 'Πρώτη Στήλη',
-		headersRow		: 'Πρώτη Σειρά',
-		headersBoth		: 'Και τα δύο',
-		invalidRows		: 'Ο αριθμός των σειρών πρέπει να είναι μεγαλύτερος από 0.',
-		invalidCols		: 'Ο αριθμός των στηλών πρέπει να είναι μεγαλύτερος από 0.',
-		invalidBorder	: 'Το πάχος του περιγράμματος πρέπει να είναι ένας αριθμός.',
-		invalidWidth	: 'Το πλάτος του πίνακα πρέπει να είναι ένας αριθμός.',
-		invalidHeight	: 'Το ύψος του πίνακα πρέπει να είναι ένας αριθμός.',
-		invalidCellSpacing	: 'Η απόσταση μεταξύ των κελιών πρέπει να είναι ένας θετικός αριθμός.',
-		invalidCellPadding	: 'Το γέμισμα μέσα στα κελιά πρέπει να είναι ένας θετικός αριθμός.',
+		headers		: 'Headers', // MISSING
+		headersNone		: 'None', // MISSING
+		headersColumn	: 'First column', // MISSING
+		headersRow		: 'First Row', // MISSING
+		headersBoth		: 'Both', // MISSING
+		invalidRows		: 'Number of rows must be a number greater than 0.', // MISSING
+		invalidCols		: 'Number of columns must be a number greater than 0.', // MISSING
+		invalidBorder	: 'Border size must be a number.', // MISSING
+		invalidWidth	: 'Table width must be a number.', // MISSING
+		invalidHeight	: 'Table height must be a number.', // MISSING
+		invalidCellSpacing	: 'Cell spacing must be a positive number.', // MISSING
+		invalidCellPadding	: 'Cell padding must be a positive number.', // MISSING
 
 		cell :
 		{
 			menu			: 'Κελί',
-			insertBefore	: 'Εισαγωγή Κελιού Πριν',
-			insertAfter		: 'Εισαγωγή Κελιού Μετά',
+			insertBefore	: 'Insert Cell Before', // MISSING
+			insertAfter		: 'Insert Cell After', // MISSING
 			deleteCell		: 'Διαγραφή Κελιών',
 			merge			: 'Ενοποίηση Κελιών',
-			mergeRight		: 'Συγχώνευση Με Δεξιά',
-			mergeDown		: 'Συγχώνευση Με Κάτω',
-			splitHorizontal	: 'Οριζόντιο Μοίρασμα Κελιού',
-			splitVertical	: 'Κατακόρυφο Μοίρασμα Κελιού',
-			title			: 'Ιδιότητες Κελιού',
-			cellType		: 'Τύπος Κελιού',
-			rowSpan			: 'Εύρος Σειρών',
-			colSpan			: 'Εύρος Στηλών',
+			mergeRight		: 'Merge Right', // MISSING
+			mergeDown		: 'Merge Down', // MISSING
+			splitHorizontal	: 'Split Cell Horizontally', // MISSING
+			splitVertical	: 'Split Cell Vertically', // MISSING
+			title			: 'Cell Properties', // MISSING
+			cellType		: 'Cell Type', // MISSING
+			rowSpan			: 'Rows Span', // MISSING
+			colSpan			: 'Columns Span', // MISSING
 			wordWrap		: 'Word Wrap', // MISSING
-			hAlign			: 'Οριζόντια Στοίχιση',
-			vAlign			: 'Κάθετη Στοίχιση',
+			hAlign			: 'Horizontal Alignment', // MISSING
+			vAlign			: 'Vertical Alignment', // MISSING
 			alignBaseline	: 'Baseline', // MISSING
-			bgColor			: 'Χρώμα Φόντου',
-			borderColor		: 'Χρώμα Περιγράμματος',
-			data			: 'Δεδομένα',
-			header			: 'Κεφαλίδα',
-			yes				: 'Ναι',
-			no				: 'Όχι',
-			invalidWidth	: 'Το πλάτος του κελιού πρέπει να είναι ένας αριθμός.',
-			invalidHeight	: 'Το ύψος του κελιού πρέπει να είναι ένας αριθμός.',
+			bgColor			: 'Background Color', // MISSING
+			borderColor		: 'Border Color', // MISSING
+			data			: 'Data', // MISSING
+			header			: 'Header', // MISSING
+			yes				: 'Yes', // MISSING
+			no				: 'No', // MISSING
+			invalidWidth	: 'Cell width must be a number.', // MISSING
+			invalidHeight	: 'Cell height must be a number.', // MISSING
 			invalidRowSpan	: 'Rows span must be a whole number.', // MISSING
 			invalidColSpan	: 'Columns span must be a whole number.', // MISSING
-			chooseColor		: 'Επιλέξτε'
+			chooseColor		: 'Choose' // MISSING
 		},
 
 		row :
 		{
 			menu			: 'Σειρά',
-			insertBefore	: 'Εισαγωγή Σειράς Από Πάνω',
-			insertAfter		: 'Εισαγωγή Σειράς Από Κάτω',
+			insertBefore	: 'Insert Row Before', // MISSING
+			insertAfter		: 'Insert Row After', // MISSING
 			deleteRow		: 'Διαγραφή Γραμμών'
 		},
 
 		column :
 		{
 			menu			: 'Στήλη',
-			insertBefore	: 'Εισαγωγή Στήλης Πριν',
-			insertAfter		: 'Εισαγωγή Σειράς Μετά',
+			insertBefore	: 'Insert Column Before', // MISSING
+			insertAfter		: 'Insert Column After', // MISSING
 			deleteColumn	: 'Διαγραφή Κολωνών'
 		}
 	},
@@ -358,7 +356,7 @@ CKEDITOR.lang['el'] =
 		menu		: 'Ιδιότητες Φόρμας',
 		action		: 'Δράση',
 		method		: 'Μέθοδος',
-		encoding	: 'Κωδικοποίηση'
+		encoding	: 'Encoding' // MISSING
 	},
 
 	// Select Field Dialog.
@@ -427,7 +425,7 @@ CKEDITOR.lang['el'] =
 		vSpace		: 'Κάθετο Διάστημα',
 		alertUrl	: 'Εισάγετε την τοποθεσία (URL) της εικόνας',
 		linkTab		: 'Σύνδεσμος',
-		button2Img	: 'Θέλετε να μετατρέψετε το επιλεγμένο κουμπί εικόνας σε απλή εικόνα;',
+		button2Img	: 'Do you want to transform the selected image button on a simple image?', // MISSING
 		img2Button	: 'Do you want to transform the selected image on a image button?', // MISSING
 		urlMissing	: 'Image source URL is missing.', // MISSING
 		validateBorder	: 'Border must be a whole number.', // MISSING
@@ -439,7 +437,7 @@ CKEDITOR.lang['el'] =
 	flash :
 	{
 		properties		: 'Ιδιότητες Flash',
-		propertiesTab	: 'Ιδιότητες',
+		propertiesTab	: 'Properties', // MISSING
 		title			: 'Ιδιότητες Flash',
 		chkPlay			: 'Αυτόματη Εκτέλεση',
 		chkLoop			: 'Επανάληψη',
@@ -450,25 +448,25 @@ CKEDITOR.lang['el'] =
 		scaleNoBorder	: 'Χωρίς Περίγραμμα',
 		scaleFit		: 'Ακριβές Μέγεθος',
 		access			: 'Script Access', // MISSING
-		accessAlways	: 'Πάντα',
+		accessAlways	: 'Always', // MISSING
 		accessSameDomain: 'Same domain', // MISSING
-		accessNever		: 'Ποτέ',
+		accessNever		: 'Never', // MISSING
 		alignAbsBottom	: 'Απόλυτα Κάτω',
 		alignAbsMiddle	: 'Απόλυτα στη Μέση',
 		alignBaseline	: 'Γραμμή Βάσης',
 		alignTextTop	: 'Κορυφή Κειμένου',
-		quality			: 'Ποιότητα',
-		qualityBest		: 'Καλύτερη',
-		qualityHigh		: 'Υψηλή',
-		qualityAutoHigh	: 'Αυτόματη Υψηλή',
-		qualityMedium	: 'Μεσαία',
-		qualityAutoLow	: 'Αυτόματη Χαμηλή',
-		qualityLow		: 'Χαμηλή',
-		windowModeWindow: 'Παράθυρο',
-		windowModeOpaque: 'Συμπαγές',
-		windowModeTransparent : 'Διάφανο',
+		quality			: 'Quality', // MISSING
+		qualityBest		: 'Best', // MISSING
+		qualityHigh		: 'High', // MISSING
+		qualityAutoHigh	: 'Auto High', // MISSING
+		qualityMedium	: 'Medium', // MISSING
+		qualityAutoLow	: 'Auto Low', // MISSING
+		qualityLow		: 'Low', // MISSING
+		windowModeWindow: 'Window', // MISSING
+		windowModeOpaque: 'Opaque', // MISSING
+		windowModeTransparent : 'Transparent', // MISSING
 		windowMode		: 'Window mode', // MISSING
-		flashvars		: 'Μεταβλητές για Flash',
+		flashvars		: 'Variables for Flash', // MISSING
 		bgcolor			: 'Χρώμα Υποβάθρου',
 		hSpace			: 'Οριζόντιο Διάστημα',
 		vSpace			: 'Κάθετο Διάστημα',
@@ -481,8 +479,8 @@ CKEDITOR.lang['el'] =
 	spellCheck :
 	{
 		toolbar			: 'Ορθογραφικός Έλεγχος',
-		title			: 'Ορθογραφικός Έλεγχος',
-		notAvailable	: 'Η υπηρεσία δεν είναι διαθέσιμη αυτήν την στιγμή.',
+		title			: 'Spell Check', // MISSING
+		notAvailable	: 'Sorry, but service is unavailable now.', // MISSING
 		errorLoading	: 'Error loading application service host: %s.', // MISSING
 		notInDic		: 'Δεν υπάρχει στο λεξικό',
 		changeTo		: 'Αλλαγή σε',
@@ -504,13 +502,13 @@ CKEDITOR.lang['el'] =
 	{
 		toolbar	: 'Smiley',
 		title	: 'Επιλέξτε ένα Smiley',
-		options : 'Επιλογές Smiley'
+		options : 'Smiley Options' // MISSING
 	},
 
 	elementsPath :
 	{
 		eleLabel : 'Elements path', // MISSING
-		eleTitle : '%1 στοιχείο'
+		eleTitle : '%1 element' // MISSING
 	},
 
 	numberedlist	: 'Εισαγωγή/Απομάκρυνση Αριθμημένης Λίστας',
@@ -612,21 +610,21 @@ CKEDITOR.lang['el'] =
 		title		: 'IFrame Properties', // MISSING
 		toolbar		: 'IFrame', // MISSING
 		noUrl		: 'Please type the iframe URL', // MISSING
-		scrolling	: 'Ενεργοποίηση μπαρών κύλισης',
+		scrolling	: 'Enable scrollbars', // MISSING
 		border		: 'Show frame border' // MISSING
 	},
 
 	font :
 	{
 		label		: 'Γραμματοσειρά',
-		voiceLabel	: 'Γραμματοσειρά',
+		voiceLabel	: 'Font', // MISSING
 		panelTitle	: 'Όνομα Γραμματοσειράς'
 	},
 
 	fontSize :
 	{
 		label		: 'Μέγεθος',
-		voiceLabel	: 'Μέγεθος γραμματοσειράς',
+		voiceLabel	: 'Font Size', // MISSING
 		panelTitle	: 'Μέγεθος Γραμματοσειράς'
 	},
 
@@ -634,14 +632,14 @@ CKEDITOR.lang['el'] =
 	{
 		textColorTitle	: 'Χρώμα Κειμένου',
 		bgColorTitle	: 'Χρώμα Φόντου',
-		panelTitle		: 'Χρώματα',
+		panelTitle		: 'Colors', // MISSING
 		auto			: 'Αυτόματα',
 		more			: 'Περισσότερα χρώματα...'
 	},
 
 	colors :
 	{
-		'000' : 'Μαύρο',
+		'000' : 'Black', // MISSING
 		'800000' : 'Maroon', // MISSING
 		'8B4513' : 'Saddle Brown', // MISSING
 		'2F4F4F' : 'Dark Slate Gray', // MISSING
@@ -655,8 +653,8 @@ CKEDITOR.lang['el'] =
 		'006400' : 'Dark Green', // MISSING
 		'40E0D0' : 'Turquoise', // MISSING
 		'0000CD' : 'Medium Blue', // MISSING
-		'800080' : 'Μώβ',
-		'808080' : 'Γκρί',
+		'800080' : 'Purple', // MISSING
+		'808080' : 'Gray', // MISSING
 		'F00' : 'Red', // MISSING
 		'FF8C00' : 'Dark Orange', // MISSING
 		'FFD700' : 'Gold', // MISSING
@@ -691,37 +689,37 @@ CKEDITOR.lang['el'] =
 		disable			: 'Disable SCAYT', // MISSING
 		about			: 'About SCAYT', // MISSING
 		toggle			: 'Toggle SCAYT', // MISSING
-		options			: 'Επιλογές',
-		langs			: 'Γλώσσες',
-		moreSuggestions	: 'Περισσότερες προτάσεις',
-		ignore			: 'Αγνόησε το',
-		ignoreAll		: 'Να αγνοηθούν όλα',
-		addWord			: 'Προσθήκη στο λεξικό',
-		emptyDic		: 'Το όνομα του λεξικού δεν πρέπει να είναι κενό.',
-		noSuggestions	: 'No suggestions', // MISSING
-		optionsTab		: 'Επιλογές',
-		allCaps			: 'Να αγνοούνται όλες οι λέξεις σε κεφαλαία',
+		options			: 'Options', // MISSING
+		langs			: 'Languages', // MISSING
+		moreSuggestions	: 'More suggestions', // MISSING
+		ignore			: 'Ignore', // MISSING
+		ignoreAll		: 'Ignore All', // MISSING
+		addWord			: 'Add Word', // MISSING
+		emptyDic		: 'Dictionary name should not be empty.', // MISSING
+
+		optionsTab		: 'Options', // MISSING
+		allCaps			: 'Ignore All-Caps Words', // MISSING
 		ignoreDomainNames : 'Ignore Domain Names', // MISSING
 		mixedCase		: 'Ignore Words with Mixed Case', // MISSING
 		mixedWithDigits	: 'Ignore Words with Numbers', // MISSING
 
-		languagesTab	: 'Γλώσσες',
+		languagesTab	: 'Languages', // MISSING
 
-		dictionariesTab	: 'Λεξικά',
-		dic_field_name	: 'Όνομα λεξικού',
-		dic_create		: 'Δημιουργία',
-		dic_restore		: 'Ανάκτηση',
-		dic_delete		: 'Διαγραφή',
-		dic_rename		: 'Μετονομασία',
+		dictionariesTab	: 'Dictionaries', // MISSING
+		dic_field_name	: 'Dictionary name', // MISSING
+		dic_create		: 'Create', // MISSING
+		dic_restore		: 'Restore', // MISSING
+		dic_delete		: 'Delete', // MISSING
+		dic_rename		: 'Rename', // MISSING
 		dic_info		: 'Initially the User Dictionary is stored in a Cookie. However, Cookies are limited in size. When the User Dictionary grows to a point where it cannot be stored in a Cookie, then the dictionary may be stored on our server. To store your personal dictionary on our server you should specify a name for your dictionary. If you already have a stored dictionary, please type its name and click the Restore button.', // MISSING
 
-		aboutTab		: 'Περί'
+		aboutTab		: 'About' // MISSING
 	},
 
 	about :
 	{
-		title		: 'Περί του CKEditor',
-		dlgTitle	: 'Περί του CKEditor',
+		title		: 'About CKEditor', // MISSING
+		dlgTitle	: 'About CKEditor', // MISSING
 		help	: 'Check $1 for help.', // MISSING
 		userGuide : 'CKEditor User\'s Guide', // MISSING
 		moreInfo	: 'For licensing information please visit our web site:', // MISSING
@@ -737,18 +735,18 @@ CKEDITOR.lang['el'] =
 		flash		: 'Flash Animation', // MISSING
 		iframe		: 'IFrame', // MISSING
 		hiddenfield	: 'Hidden Field', // MISSING
-		unknown		: 'Άγνωστο Αντικείμενο'
+		unknown		: 'Unknown Object' // MISSING
 	},
 
 	resize : 'Σύρσιμο για αλλαγή μεγέθους',
 
 	colordialog :
 	{
-		title		: 'Επιλογή Χρώματος',
-		options	:	'Επιλογές Χρωμάτων',
+		title		: 'Select color', // MISSING
+		options	:	'Color Options', // MISSING
 		highlight	: 'Highlight', // MISSING
-		selected	: 'Επιλεγμένο Χρώμα',
-		clear		: 'Καθαρισμός'
+		selected	: 'Selected Color', // MISSING
+		clear		: 'Clear' // MISSING
 	},
 
 	toolbarCollapse	: 'Σύμπτηξη Εργαλειοθήκης',
@@ -756,17 +754,17 @@ CKEDITOR.lang['el'] =
 
 	toolbarGroups :
 	{
-		document : 'Έγγραφο',
+		document : 'Document', // MISSING
 		clipboard : 'Clipboard/Undo', // MISSING
-		editing : 'Σε επεξεργασία',
-		forms : 'Φόρμες',
-		basicstyles : 'Βασικά στυλ',
-		paragraph : 'Παράγραφος',
-		links : 'Συνδέσμοι',
-		insert : 'Εισαγωγή',
-		styles : 'Στυλ',
-		colors : 'Χρώματα',
-		tools : 'Εργαλεία'
+		editing : 'Editing', // MISSING
+		forms : 'Forms', // MISSING
+		basicstyles : 'Basic Styles', // MISSING
+		paragraph : 'Paragraph', // MISSING
+		links : 'Links', // MISSING
+		insert : 'Insert', // MISSING
+		styles : 'Styles', // MISSING
+		colors : 'Colors', // MISSING
+		tools : 'Tools' // MISSING
 	},
 
 	bidi :

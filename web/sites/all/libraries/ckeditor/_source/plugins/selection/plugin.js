@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -72,32 +72,29 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 	function rangeRequiresFix( range )
 	{
-		function isTextCt( node, isAtEnd )
+		function isInlineCt( node )
 		{
-			if ( !node || node.type == CKEDITOR.NODE_TEXT )
-				return false;
-
-			var testRng = range.clone();
-			return testRng[ 'moveToElementEdit' + ( isAtEnd ? 'End' : 'Start' ) ]( node );
+			return node && node.type == CKEDITOR.NODE_ELEMENT
+					&& node.getName() in CKEDITOR.dtd.$removeEmpty;
 		}
 
-		var ct = range.startContainer;
+		function singletonBlock( node )
+		{
+			var body = range.document.getBody();
+			return !node.is( 'body' ) && body.getChildCount() == 1;
+		}
 
-		var previous = range.getPreviousNode( isVisible, null, ct ),
-			next = range.getNextNode( isVisible, null, ct );
+		var start = range.startContainer,
+			offset = range.startOffset;
 
-		// Any adjacent text container may absorb the cursor, e.g.
-		// <p><strong>text</strong>^foo</p>
-		// <p>foo^<strong>text</strong></p>
-		// <div>^<p>foo</p></div>
-		if ( isTextCt( previous ) || isTextCt( next, 1 ) )
-			return true;
+		if ( start.type == CKEDITOR.NODE_TEXT )
+			return false;
 
-		// Empty block/inline element is also affected. <span>^</span>, <p>^</p> (#7222)
-		if ( !( previous || next ) && !( ct.type == CKEDITOR.NODE_ELEMENT && ct.isBlockBoundary() && ct.getBogus() ) )
-			return true;
-
-		return false;
+		// 1. Empty inline element. <span>^</span>
+		// 2. Adjoin to inline element. <p><strong>text</strong>^</p>
+		// 3. The only empty block in document. <body><p>^</p></body> (#7222)
+		return !CKEDITOR.tools.trim( start.getHtml() ) ? isInlineCt( start ) || singletonBlock( start )
+				: isInlineCt( start.getChild( offset - 1 ) ) || isInlineCt( start.getChild( offset ) );
 	}
 
 	var selectAllCmd =
@@ -272,7 +269,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 			editor.on( 'contentDom', function()
 				{
 					var doc = editor.document,
-						outerDoc = CKEDITOR.document,
 						body = doc.getBody(),
 						html = doc.getDocumentElement();
 
@@ -412,117 +408,81 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 								saveSelection();
 							});
 
-						// When content doc is in standards mode, IE doesn't produce text selection
-						// when click on the region outside of body, we emulate
-						// the correct behavior here. (#1659, #7932, # 9097)
-						if ( doc.$.compatMode != 'BackCompat' )
+						// When content doc is in standards mode, IE doesn't focus the editor when
+						// clicking at the region below body (on html element) content, we emulate
+						// the normal behavior on old IEs. (#1659, #7932)
+						if ( ( CKEDITOR.env.ie7Compat || CKEDITOR.env.ie6Compat )
+							 && doc.$.compatMode != 'BackCompat' )
 						{
-							if ( CKEDITOR.env.ie7Compat || CKEDITOR.env.ie6Compat )
+							html.on( 'mousedown', function( evt )
 							{
-								function moveRangeToPoint( range, x, y )
+								evt = evt.data.$;
+
+								// Expand the text range along with mouse move.
+								function onHover( evt )
 								{
-									// Error prune in IE7. (#9034, #9110)
-									try { range.moveToPoint( x, y ); } catch ( e ) {}
-								}
-
-								html.on( 'mousedown', function( evt )
-								{
-									// Expand the text range along with mouse move.
-									function onHover( evt )
+									evt = evt.data.$;
+									if ( textRng )
 									{
-										evt = evt.data.$;
-										if ( textRng )
-										{
-											// Read the current cursor.
-											var rngEnd = body.$.createTextRange();
+										// Read the current cursor.
+										var rngEnd = body.$.createTextRange();
+										rngEnd.moveToPoint( evt.x, evt.y );
 
-											moveRangeToPoint( rngEnd, evt.x, evt.y );
+										// Handle drag directions.
+										textRng.setEndPoint(
+											textRng.compareEndPoints( 'StartToStart', rngEnd ) < 0 ?
+											'EndToEnd' :
+											'StartToStart',
+											rngEnd );
 
-											// Handle drag directions.
-											textRng.setEndPoint(
-												startRng.compareEndPoints( 'StartToStart', rngEnd ) < 0 ?
-												'EndToEnd' :
-												'StartToStart',
-												rngEnd );
-
-											// Update selection with new range.
-											textRng.select();
-										}
-									}
-
-									function removeListeners()
-									{
-										outerDoc.removeListener( 'mouseup', onSelectEnd );
-										html.removeListener( 'mouseup', onSelectEnd );
-									}
-
-									function onSelectEnd()
-									{
-
-										html.removeListener( 'mousemove', onHover );
-										removeListeners();
-
-										// Make it in effect on mouse up. (#9022)
+										// Update selection with new range.
 										textRng.select();
 									}
-
-									evt = evt.data;
-
-									// We're sure that the click happens at the region
-									// outside body, but not on scrollbar.
-									if ( evt.getTarget().is( 'html' ) &&
-											 evt.$.x < html.$.clientWidth &&
-											 evt.$.y < html.$.clientHeight )
-									{
-										// Start to build the text range.
-										var textRng = body.$.createTextRange();
-										moveRangeToPoint( textRng, evt.$.x, evt.$.y );
-										// Records the dragging start of the above text range.
-										var startRng = textRng.duplicate();
-
-										html.on( 'mousemove', onHover );
-										outerDoc.on( 'mouseup', onSelectEnd );
-										html.on( 'mouseup', onSelectEnd );
-									}
-								});
-							}
-
-							// It's much simpler for IE > 8, we just need to reselect the reported range.
-							if ( CKEDITOR.env.ie8 )
-							{
-								html.on( 'mousedown', function( evt )
-								{
-									if ( evt.data.getTarget().is( 'html' ) )
-									{
-										// Limit the text selection mouse move inside of editable. (#9715)
-										outerDoc.on( 'mouseup', onSelectEnd );
-										html.on( 'mouseup', onSelectEnd );
-									}
-
-								});
-
-								function removeListeners()
-								{
-									outerDoc.removeListener( 'mouseup', onSelectEnd );
-									html.removeListener( 'mouseup', onSelectEnd );
 								}
 
-								function onSelectEnd()
+								// We're sure that the click happens at the region
+								// below body, but not on scrollbar.
+								if ( evt.y < html.$.clientHeight
+									 && evt.y > body.$.offsetTop + body.$.clientHeight
+									 && evt.x < html.$.clientWidth )
 								{
-									removeListeners();
+									// Start to build the text range.
+									var textRng = body.$.createTextRange();
+									textRng.moveToPoint( evt.x, evt.y );
+									textRng.select();
 
-									// The event is not fired when clicking on the scrollbars,
-									// so we can safely check the following to understand
-									// whether the empty space following <body> has been clicked.
-										var sel = CKEDITOR.document.$.selection,
-											range = sel.createRange();
-										// The selection range is reported on host, but actually it should applies to the content doc.
-										if ( sel.type != 'None' && range.parentElement().ownerDocument == doc.$ )
-											range.select();
+									html.on( 'mousemove', onHover );
+
+									html.on( 'mouseup', function( evt )
+									{
+										html.removeListener( 'mousemove', onHover );
+										evt.removeListener();
+										textRng.select();
+										textRng = null;
+									} );
 								}
-							}
-
+							});
 						}
+
+						// It's much simpler for IE8, we just need to reselect the reported range.
+						if ( CKEDITOR.env.ie8 )
+						{
+							html.on( 'mouseup', function( evt )
+							{
+								// The event is not fired when clicking on the scrollbars,
+								// so we can safely check the following to understand
+								// whether the empty space following <body> has been clicked.
+								if ( evt.data.getTarget().getName() == 'html' )
+								{
+									var sel = CKEDITOR.document.$.selection,
+										range = sel.createRange();
+									// The selection range is reported on host, but actually it should applies to the content doc.
+									if ( sel.type != 'None' && range.parentElement().ownerDocument == doc.$ )
+										range.select();
+								}
+							} );
+						}
+
 						// IE is the only to provide the "selectionchange"
 						// event.
 						doc.on( 'selectionchange', saveSelection );
@@ -572,8 +532,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 									return;
 								}
 
-								// Not break because of this. (#9132)
-								try{ savedRange = nativeSel && sel.getRanges()[ 0 ]; } catch( er ) {}
+								savedRange = nativeSel && sel.getRanges()[ 0 ];
 
 								checkSelectionChangeTimeout.call( editor );
 							}
@@ -592,7 +551,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 					if ( CKEDITOR.env.webkit )
 					{
-						// Before keystroke is handled by editor, check to remove the filling char.
 						doc.on( 'keydown', function( evt )
 						{
 							var key = evt.data.getKey();
@@ -613,7 +571,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 									removeFillingChar( editor.document );
 							}
 
-						}, null, null, -1 );
+						}, null, null, 10 );
 					}
 				});
 
@@ -627,16 +585,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 					command : 'selectAll'
 				});
 
-			/**
-			 * Check if to fire the {@link CKEDITOR.editor#selectionChange} event
-			 * for the current editor instance.
-			 *
-			 * @param {Boolean} checkNow Check immediately without any delay.
-			 */
-			editor.selectionChange = function( checkNow )
-			{
-				( checkNow ? checkSelectionChange : checkSelectionChangeTimeout ).call( this );
-			};
+			editor.selectionChange = checkSelectionChangeTimeout;
 
 			// IE9 might cease to work if there's an object selection inside the iframe (#7639).
 			CKEDITOR.env.ie9Compat && editor.on( 'destroy', function()
@@ -1486,6 +1435,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 					this.isLocked = 0;
 					this.reset();
 
+					doc.getBody().focus();
+
 					if ( selectedElement )
 						this.selectElement( selectedElement );
 					else
@@ -1770,9 +1721,11 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 			start.scrollIntoView();
 		}
 	};
+})();
 
+( function()
+{
 	var notWhitespaces = CKEDITOR.dom.walker.whitespaces( true ),
-			isVisible = CKEDITOR.dom.walker.invisible( 1 ),
 			fillerTextRegex = /\ufeff|\u00a0/,
 			nonCells = { table:1,tbody:1,tr:1 };
 
