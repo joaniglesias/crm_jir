@@ -1,0 +1,17 @@
+name = Access by Term (ABT)
+description = ABT controls access based on relationship between node->term<-user.
+core = 7.x
+php = 5.x
+package = Access control
+files[] = abt.module
+files[] = abtutils.inc
+files[] = abt.test
+dependencies[] = taxonomy
+dependencies[] = node
+dependencies[] = field
+; Information added by drupal.org packaging script on 2012-01-30
+version = "7.x-1.5"
+core = "7.x"
+project = "abt"
+datestamp = "1327964437"
+
